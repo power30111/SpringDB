@@ -1,8 +1,11 @@
 package hello.jdbc.repository;
 
 
+import hello.jdbc.connection.DBConnectionUtil;
 import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
+
+import java.sql.*;
 
 /**
  * JDBC - DriverManager 사용
@@ -10,7 +13,58 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MemberRepositoryV0 {
 
-    public Member save(Member member){
+    public Member save(Member member) throws SQLException {
         String sql = "insert into member(member_id, money) values (?,?)";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            //위에 value에 각각 값 넣기
+            pstmt.setString(1, member.getMemberId());
+            pstmt.setInt(2,member.getMoney());
+            pstmt.executeUpdate();
+            return member;
+        } catch (SQLException e) {
+            log.error("db error",e);
+            throw e;
+        }finally {
+            //항상 연순서대로 닫아줘야만 함s
+            close(con,pstmt,null);
+        }
+    }
+
+    private void close(Connection con, Statement stmt, ResultSet rs){
+
+        if (rs != null){
+            try{
+                rs.close();
+            }catch (SQLException e){
+                log.error("error",e);
+            }
+        }
+
+        if (stmt !=null){
+            try{
+                stmt.close();
+
+            }catch (SQLException e){
+                log.info("error",e);
+            }
+        }
+        if (con != null){
+            try{
+                con.close();
+
+            }catch (SQLException e){
+                log.info("error",e);
+            }
+        }
+    }
+
+    private static Connection getConnection() {
+        return DBConnectionUtil.getConnection();
     }
 }
