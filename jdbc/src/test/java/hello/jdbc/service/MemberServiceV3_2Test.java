@@ -16,22 +16,22 @@ import java.sql.SQLException;
 import static hello.jdbc.connection.ConnectionConst.*;
 
 /**
- * 기본 동작, 트랜잭션 도입
+ * 트랜잭션 - 트랜잭션 템플릿
  */
-class MemberServiceV3_1Test {
+class MemberServiceV3_2Test {
 
     public static final String Member_A = "memberA";
     public static final String Member_B = "memberB";
     public static final String Member_EX = "ex";
     private MemberRepositoryV3 memberRepository;
-    private MemberServiceV3_1 memberService;
+    private MemberServiceV3_2 memberService;
 
     @BeforeEach
     void before(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource(URL, USERNAME, PASSWORD);
         memberRepository = new MemberRepositoryV3(dataSource);
         PlatformTransactionManager transactionManager = new DataSourceTransactionManager(dataSource);
-        memberService = new MemberServiceV3_1(transactionManager,memberRepository);
+        memberService = new MemberServiceV3_2(transactionManager,memberRepository);
     }
     @AfterEach
     void after() throws SQLException {
